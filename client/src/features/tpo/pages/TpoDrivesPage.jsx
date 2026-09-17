@@ -4,6 +4,7 @@ import { getDrives, createDrive, updateDriveStatus, getDriveApplications } from 
 import { updateApplicationStatus } from '../../../api/applications.api.js';
 import StatusBadge from '../../../components/common/StatusBadge.jsx';
 import useFetch from '../../../hooks/useFetch.js';
+import RoundManager from '../../../components/common/RoundManager.jsx';
 
 const NEXT = { APPLIED: 'SHORTLISTED', SHORTLISTED: 'IN_PROCESS', IN_PROCESS: 'SELECTED' };
 
@@ -175,7 +176,7 @@ export default function TpoDrivesPage() {
                   </td>
                 </tr>
                 {expanded === d.id && (
-                  <tr><td colSpan="5" className="p-2"><Applicants driveId={d.id} /></td></tr>
+                  <tr><td colSpan="5" className="p-2 space-y-3"><Applicants driveId={d.id} /><RoundManager driveId={d.id} /></td></tr>
                 )}
               </Fragment>
             ))}

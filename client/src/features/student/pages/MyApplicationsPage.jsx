@@ -28,9 +28,18 @@ export default function MyApplicationsPage() {
               <StatusBadge status={a.status} />
             </div>
             <Stepper status={a.status} />
+            {(a.roundResults || []).length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {a.roundResults.map((rr) => (
+                  <span key={rr.id} className={`badge ${rr.result === 'PASS' ? 'bg-emerald-100 text-emerald-700' : rr.result === 'FAIL' ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-400'}`}>
+                    {rr.round?.name}: {rr.result}
+                  </span>
+                ))}
+              </div>
+            )}
             {a.offer && (
               <div className="mt-4 px-4 py-3 rounded-lg bg-emerald-50 text-sm text-emerald-700">
-                🎯 Offer: ₹{a.offer.ctc} LPA · {a.offer.jobRole} · <b>{a.offer.status}</b>
+                Offer: INR {a.offer.ctc} LPA · {a.offer.jobRole} · <b>{a.offer.status}</b>
               </div>
             )}
           </div>

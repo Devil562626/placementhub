@@ -11,6 +11,7 @@ import offerRoutes from './routes/offer.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import companyRoutes from './routes/companies.routes.js';
 import studentRoutes from './routes/students.routes.js';
+import roundRoutes from './routes/round.routes.js';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api/offers', offerRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api', roundRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
