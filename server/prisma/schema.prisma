@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TPO
+  RECRUITER
+  ADMIN
+}
+
+enum DriveStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+}
+
+enum DriveMode {
+  ONSITE
+  VIRTUAL
+  HYBRID
+}
+
+enum ApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  IN_PROCESS
+  SELECTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ResultStatus {
+  PASS
+  FAIL
+  PENDING
+}
+
+enum OfferStatus {
+  OFFERED
+  ACCEPTED
+  DECLINED
+}
+
+enum PlacementStatus {
+  UNPLACED
+  PLACED
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(STUDENT)
+  createdAt    DateTime @default(now())
+  studentProfile   StudentProfile?
+  recruiterProfile RecruiterProfile?
+  notifications    Notification[]
+  announcements    Announcement[]
+}
+
+model StudentProfile {
+  id             Int             @id @default(autoincrement())
+  userId         Int             @unique
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rollNo         String          @unique
+  branch         String
+  gradYear       Int
+  cgpa           Float
+  activeBacklogs Int             @default(0)
+  resumeUrl      String?
+  phone          String?
+  placedStatus   PlacementStatus @default(UNPLACED)
+  applications Application[]
+}
+
+model Company {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  industry String?
+  website  String?
+  drives     Drive[]
+  recruiters RecruiterProfile[]
+}
+
+model RecruiterProfile {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId   Int
+  company     Company  @relation(fields: [companyId], references: [id])
+  designation String?
+}
+
+model Drive {
+  id              Int         @id @default(autoincrement())
+  companyId       Int
+  company         Company     @relation(fields: [companyId], references: [id])
+  jobTitle        String
+  description     String
+  jobRole         String
+  ctcMin          Float?
+  ctcMax          Float?
+  location        String?
+  mode            DriveMode   @default(ONSITE)
+  lastDateToApply DateTime
+  driveDate       DateTime?
+  status          DriveStatus @default(DRAFT)
+  createdAt       DateTime    @default(now())
+  eligibility  EligibilityCriteria?
+  rounds       Round[]
+  applications Application[]
+}
+
+model EligibilityCriteria {
+  id               Int     @id @default(autoincrement())
+  driveId          Int     @unique
+  drive            Drive   @relation(fields: [driveId], references: [id], onDelete: Cascade)
+  minCgpa          Float   @default(0)
+  allowedBranches  String[]
+  maxBacklogs      Int     @default(0)
+  allowedGradYears Int[]
+}
+
+model Application {
+  id        Int               @id @default(autoincrement())
+  studentId Int
+  student   StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  driveId   Int
+  drive     Drive             @relation(fields: [driveId], references: [id], onDelete: Cascade)
+  status    ApplicationStatus @default(APPLIED)
+  appliedAt DateTime          @default(now())
+  @@unique([studentId, driveId])
+  roundResults RoundResult[]
+  offer        Offer?
+}
+
+model Round {
+  id          Int       @id @default(autoincrement())
+  driveId     Int
+  drive       Drive     @relation(fields: [driveId], references: [id], onDelete: Cascade)
+  name        String
+  sequence    Int
+  scheduledAt DateTime?
+  venue       String?
+  @@unique([driveId, sequence])
+  results RoundResult[]
+}
+
+model RoundResult {
+  id            Int          @id @default(autoincrement())
+  roundId       Int
+  round         Round        @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  applicationId Int
+  application   Application  @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  result        ResultStatus @default(PENDING)
+  feedback      String?
+  @@unique([roundId, applicationId])
+}
+
+model Offer {
+  id            Int         @id @default(autoincrement())
+  applicationId Int         @unique
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  ctc           Float
+  jobRole       String
+  joiningDate   DateTime?
+  status        OfferStatus @default(OFFERED)
+  createdAt     DateTime    @default(now())
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
+  title     String
+  body      String
+  audience  String[]
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
