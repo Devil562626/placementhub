@@ -59,6 +59,8 @@ model User {
   passwordHash String
   role         Role     @default(STUDENT)
   createdAt    DateTime @default(now())
+  passwordResetToken  String?
+  passwordResetExpires DateTime?
   studentProfile   StudentProfile?
   recruiterProfile RecruiterProfile?
   notifications    Notification[]

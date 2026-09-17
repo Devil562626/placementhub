@@ -4,6 +4,9 @@ import AppShell from './components/layout/AppShell.jsx';
 import ProtectedRoute from './routes/ProtectedRoute.jsx';
 import RoleRoute from './routes/RoleRoute.jsx';
 import LoginPage from './features/auth/pages/LoginPage.jsx';
+import RegisterPage from './features/auth/pages/RegisterPage.jsx';
+import ForgotPasswordPage from './features/auth/pages/ForgotPasswordPage.jsx';
+import ResetPasswordPage from './features/auth/pages/ResetPasswordPage.jsx';
 import StudentDashboard from './features/student/pages/StudentDashboard.jsx';
 import DrivesPage from './features/student/pages/DrivesPage.jsx';
 import MyApplicationsPage from './features/student/pages/MyApplicationsPage.jsx';
@@ -33,6 +36,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route
         path="/"
         element={

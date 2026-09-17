@@ -9,9 +9,17 @@ export async function register(data) {
   const exists = await prisma.user.findUnique({ where: { email: data.email } });
   if (exists) throw new ApiError(409, 'Email already registered');
 
-  const role = data.role || 'STUDENT';
-  if (role === 'STUDENT' && !data.rollNo) {
+  const requestedRole = data.role || 'STUDENT';
+  // security rule: nobody can self-register as TPO or ADMIN
+  if (requestedRole !== 'STUDENT' && requestedRole !== 'RECRUITER') {
+    throw new ApiError(403, 'This role can only be created by an administrator');
+  }
+  if (requestedRole === 'STUDENT' && !data.rollNo) {
     throw new ApiError(400, 'rollNo is required for student registration');
+  }
+  // students must match college pattern (adjust domain to your college)
+  if (requestedRole === 'STUDENT' && !data.email.endsWith('@college.edu')) {
+    throw new ApiError(403, 'Students must register with their @college.edu email');
   }
 
   const passwordHash = await bcrypt.hash(data.password, 10);
@@ -21,8 +29,8 @@ export async function register(data) {
       name: data.name,
       email: data.email,
       passwordHash,
-      role,
-      ...(role === 'STUDENT' && {
+      role: requestedRole,
+      ...(requestedRole === 'STUDENT' && {
         studentProfile: {
           create: {
             rollNo: data.rollNo,
@@ -32,7 +40,7 @@ export async function register(data) {
           },
         },
       }),
-      ...(role === 'RECRUITER' && {
+      ...(requestedRole === 'RECRUITER' && {
         recruiterProfile: {
           create: {
             company: { create: { name: data.companyName || data.name + ' Corp' } },
@@ -64,6 +72,35 @@ export async function me(userId) {
     include: { studentProfile: true, recruiterProfile: { include: { company: true } } },
   });
   if (!user) throw new ApiError(404, 'User not found');
-  const { passwordHash, ...safe } = user;
+  const { passwordHash, passwordResetToken, passwordResetExpires, ...safe } = user;
   return safe;
+}
+
+// TPO-only: create TPO/ADMIN accounts (so roles stay controlled)
+export async function createStaff(actor, data) {
+  if (actor.role !== 'TPO' && actor.role !== 'ADMIN') {
+    throw new ApiError(403, 'Only TPO/Admin can create staff accounts');
+  }
+  const exists = await prisma.user.findUnique({ where: { email: data.email } });
+  if (exists) throw new ApiError(409, 'Email already registered');
+
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      passwordHash: await bcrypt.hash(data.password, 10),
+      role: data.role,
+    },
+  });
+  return safeUser(user);
+}
+
+export async function listUsers(actor) {
+  if (actor.role !== 'TPO' && actor.role !== 'ADMIN') {
+    throw new ApiError(403, 'Only TPO/Admin can list users');
+  }
+  return prisma.user.findMany({
+    select: { id: true, name: true, email: true, role: true, createdAt: true },
+    orderBy: { createdAt: 'desc' },
+  });
 }

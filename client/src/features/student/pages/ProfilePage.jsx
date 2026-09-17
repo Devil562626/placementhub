@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { getMyProfile, updateMyProfile, uploadResume } from '../../../api/students.api.js';
+import { changePassword } from '../../../api/auth.api.js';
 import StatusBadge from '../../../components/common/StatusBadge.jsx';
 import useFetch from '../../../hooks/useFetch.js';
 
@@ -12,13 +13,16 @@ export default function ProfilePage() {
   const fileRef = useRef(null);
   const p = data?.data;
 
+  const [pw, setPw] = useState({ oldPassword: '', newPassword: '', confirm: '' });
+  const [pwMsg, setPwMsg] = useState('');
+  const [pwErr, setPwErr] = useState('');
+  const [pwLoading, setPwLoading] = useState(false);
+  const setPwField = (k) => (e) => setPw({ ...pw, [k]: e.target.value });
+
   function startEdit() {
     setForm({
-      cgpa: p.cgpa,
-      activeBacklogs: p.activeBacklogs,
-      branch: p.branch,
-      gradYear: p.gradYear,
-      phone: p.phone || '',
+      cgpa: p.cgpa, activeBacklogs: p.activeBacklogs,
+      branch: p.branch, gradYear: p.gradYear, phone: p.phone || '',
     });
     setEditing(true);
     setMsg('');
@@ -59,6 +63,26 @@ export default function ProfilePage() {
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  async function savePassword(e) {
+    e.preventDefault();
+    setPwMsg('');
+    setPwErr('');
+    if (pw.newPassword !== pw.confirm) {
+      setPwErr('New passwords do not match');
+      return;
+    }
+    setPwLoading(true);
+    try {
+      await changePassword(pw.oldPassword, pw.newPassword);
+      setPwMsg('Password changed successfully');
+      setPw({ oldPassword: '', newPassword: '', confirm: '' });
+    } catch (err) {
+      setPwErr(err.message || 'Failed to change password');
+    } finally {
+      setPwLoading(false);
     }
   }
 
@@ -122,7 +146,7 @@ export default function ProfilePage() {
       <div className="card mt-4">
         <h2 className="font-semibold mb-3">Resume</h2>
         {p.resumeUrl ? (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-2">
             <a href={p.resumeUrl} target="_blank" rel="noreferrer" className="text-primary-600 font-semibold text-sm">View current resume (PDF)</a>
             <span className="text-xs text-slate-400">or replace:</span>
           </div>
@@ -131,12 +155,24 @@ export default function ProfilePage() {
         )}
         <input ref={fileRef} type="file" accept="application/pdf" className="hidden" onChange={handleFile} />
         <button
-          className="btn border border-primary-600 text-primary-600 hover:bg-primary-50 mt-2"
+          className="btn border border-primary-600 text-primary-600 hover:bg-primary-50"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
         >
           {uploading ? 'Uploading...' : p.resumeUrl ? 'Replace Resume (PDF)' : 'Upload Resume (PDF, max 5MB)'}
         </button>
+      </div>
+
+      <div className="card mt-4">
+        <h2 className="font-semibold mb-3">Change Password</h2>
+        {pwMsg && <div className="mb-3 px-4 py-3 rounded-lg bg-emerald-50 text-emerald-700 text-sm animate-popIn">{pwMsg}</div>}
+        {pwErr && <div className="mb-3 px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm animate-shake">{pwErr}</div>}
+        <form onSubmit={savePassword} className="space-y-3 max-w-sm">
+          <input className="input" type="password" placeholder="Current password" value={pw.oldPassword} onChange={setPwField('oldPassword')} required />
+          <input className="input" type="password" placeholder="New password (min 6)" value={pw.newPassword} onChange={setPwField('newPassword')} required minLength={6} />
+          <input className="input" type="password" placeholder="Confirm new password" value={pw.confirm} onChange={setPwField('confirm')} required />
+          <button className="btn-primary" disabled={pwLoading}>{pwLoading ? 'Saving...' : 'Update Password'}</button>
+        </form>
       </div>
     </div>
   );

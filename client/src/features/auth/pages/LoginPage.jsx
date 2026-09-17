@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext.jsx';
 
 const QUICK = [
@@ -87,12 +87,14 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button type="submit" className="btn-primary w-full" disabled={loading}>
+            <div className="text-right"><Link to="/forgot-password" className="text-xs text-primary-600 font-semibold">Forgot password?</Link></div>
+<button type="submit" className="btn-primary w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-6 text-xs text-slate-400">Demo accounts - password: password123</div>
+          <div className="mt-4 text-center text-sm text-slate-500">New here? <Link to="/register" className="text-primary-600 font-semibold">Create an account</Link></div>
+<div className="mt-6 text-xs text-slate-400">Demo accounts - password: password123</div>
           <div className="mt-2 flex gap-2">
             {QUICK.map((q) => (
               <button
