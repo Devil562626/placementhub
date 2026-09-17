@@ -10,6 +10,7 @@ import applicationRoutes from './routes/application.routes.js';
 import offerRoutes from './routes/offer.routes.js';
 import reportRoutes from './routes/report.routes.js';
 import companyRoutes from './routes/companies.routes.js';
+import studentRoutes from './routes/students.routes.js';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/offers', offerRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/companies', companyRoutes);
+app.use('/api/students', studentRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
