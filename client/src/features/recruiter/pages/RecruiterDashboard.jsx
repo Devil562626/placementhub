@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { getDrives } from '../../api/drives.api.js';
+import { getDrives } from '../../../api/drives.api.js';
 import StatCard from '../../../components/common/StatCard.jsx';
-import StatusBadge from '../../components/common/StatusBadge.jsx';
-import useFetch from '../../hooks/useFetch.js';
+import StatusBadge from '../../../components/common/StatusBadge.jsx';
+import useFetch from '../../../hooks/useFetch.js';
 
 export default function RecruiterDashboard() {
   const { data, loading, error } = useFetch(getDrives, []);

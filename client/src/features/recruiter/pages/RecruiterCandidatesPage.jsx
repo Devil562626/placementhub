@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getDrives, getDriveApplications } from '../../api/drives.api.js';
-import { updateApplicationStatus } from '../../api/applications.api.js';
-import { api } from '../../api/axios.js';
-import StatusBadge from '../../components/common/StatusBadge.jsx';
-import useFetch from '../../hooks/useFetch.js';
+import { getDrives, getDriveApplications } from '../../../api/drives.api.js';
+import { updateApplicationStatus } from '../../../api/applications.api.js';
+import { api } from '../../../api/axios.js';
+import StatusBadge from '../../../components/common/StatusBadge.jsx';
+import useFetch from '../../../hooks/useFetch.js';
 
 const NEXT = { APPLIED: 'SHORTLISTED', SHORTLISTED: 'IN_PROCESS', IN_PROCESS: 'SELECTED' };
 

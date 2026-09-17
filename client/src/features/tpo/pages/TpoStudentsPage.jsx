@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { listStudents } from '../../api/students.api.js';
-import StatusBadge from '../../components/common/StatusBadge.jsx';
-import useFetch from '../../hooks/useFetch.js';
+import { listStudents } from '../../../api/students.api.js';
+import StatusBadge from '../../../components/common/StatusBadge.jsx';
+import useFetch from '../../../hooks/useFetch.js';
 
 export default function TpoStudentsPage() {
   const { data, loading, error } = useFetch(() => listStudents(), []);

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
-import { getMyProfile, updateMyProfile, uploadResume } from '../../api/students.api.js';
-import StatusBadge from '../../components/common/StatusBadge.jsx';
-import useFetch from '../../hooks/useFetch.js';
+import { getMyProfile, updateMyProfile, uploadResume } from '../../../api/students.api.js';
+import StatusBadge from '../../../components/common/StatusBadge.jsx';
+import useFetch from '../../../hooks/useFetch.js';
 
 export default function ProfilePage() {
   const { data, loading, error, reload } = useFetch(getMyProfile, []);
