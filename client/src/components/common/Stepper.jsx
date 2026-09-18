@@ -11,11 +11,11 @@ export default function Stepper({ status }) {
         const isFail = failed && i === 0;
         return (
           <div key={label} className={i < STEPS.length - 1 ? 'flex items-start flex-1' : 'flex flex-col items-center'}>
-            <div className="flex flex-col items-center w-16">
+            <div className="flex flex-col items-center w-14 sm:w-16">
               <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${isFail ? 'bg-red-500 text-white animate-popIn' : done ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-400'}`}>
                 {isFail ? 'x' : done ? '✓' : i + 1}
               </div>
-              <span className={`text-[10px] mt-1 ${done || isFail ? 'text-slate-600 font-medium' : 'text-slate-400'}`}>{label}</span>
+              <span className={`text-[9px] sm:text-[10px] mt-1 text-center ${done || isFail ? 'text-slate-600 font-medium' : 'text-slate-400'}`}>{label}</span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`h-0.5 flex-1 mt-3 ${!failed && reached > i ? 'bg-emerald-500' : 'bg-slate-200'}`} />

@@ -9,20 +9,20 @@ export default function MyApplicationsPage() {
 
   return (
     <div className="animate-fadeUp">
-      <h1 className="text-2xl font-bold mb-6">My Applications</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">My Applications</h1>
       {loading && <div className="text-sm text-slate-400">Loading...</div>}
       {error && <div className="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm">{error}</div>}
       <div className="space-y-4">
         {apps.map((a, i) => (
           <div key={a.id} className="card animate-fadeUp" style={{ animationDelay: `${i * 60}ms` }}>
-            <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center font-display font-bold text-primary-600">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center font-display font-bold text-primary-600 shrink-0">
                   {a.drive?.company?.name?.[0]}
                 </div>
-                <div>
-                  <div className="font-semibold text-ink-900">{a.drive?.company?.name}</div>
-                  <div className="text-xs text-slate-400">{a.drive?.jobTitle}</div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-ink-900 truncate">{a.drive?.company?.name}</div>
+                  <div className="text-xs text-slate-400 truncate">{a.drive?.jobTitle}</div>
                 </div>
               </div>
               <StatusBadge status={a.status} />

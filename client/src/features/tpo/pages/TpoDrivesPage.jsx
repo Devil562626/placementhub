@@ -3,8 +3,8 @@ import { api } from '../../../api/axios.js';
 import { getDrives, createDrive, updateDriveStatus, getDriveApplications } from '../../../api/drives.api.js';
 import { updateApplicationStatus } from '../../../api/applications.api.js';
 import StatusBadge from '../../../components/common/StatusBadge.jsx';
-import useFetch from '../../../hooks/useFetch.js';
 import RoundManager from '../../../components/common/RoundManager.jsx';
+import useFetch from '../../../hooks/useFetch.js';
 
 const NEXT = { APPLIED: 'SHORTLISTED', SHORTLISTED: 'IN_PROCESS', IN_PROCESS: 'SELECTED' };
 
@@ -29,28 +29,30 @@ function Applicants({ driveId }) {
     finally { setBusy(null); }
   }
 
-  if (loading) return <div className="p-4 text-xs text-slate-400">Loading applicants...</div>;
-  if (apps.length === 0) return <div className="p-4 text-xs text-slate-400">No applications yet.</div>;
+  if (loading) return <div className="p-3 text-xs text-slate-400">Loading applicants...</div>;
+  if (apps.length === 0) return <div className="p-3 text-xs text-slate-400">No applications yet.</div>;
   return (
-    <div className="p-4 bg-slate-50 space-y-2">
+    <div className="p-3 bg-slate-50 space-y-2">
       {apps.map((a) => (
-        <div key={a.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 text-sm">
-          <div>
-            <span className="font-medium text-ink-900">{a.student?.user?.name}</span>
-            <span className="text-xs text-slate-400 ml-2">{a.student?.branch} · CGPA {a.student?.cgpa}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {a.offer ? <StatusBadge status={a.offer.status} /> : <StatusBadge status={a.status} />}
-            {NEXT[a.status] && (
-              <button className="px-2.5 py-1 rounded-lg bg-primary-600 text-white text-xs font-semibold disabled:opacity-50" disabled={busy === a.id} onClick={() => advance(a)}>
-                → {NEXT[a.status].replaceAll('_', ' ')}
-              </button>
-            )}
-            {a.status === 'SELECTED' && !a.offer && (
-              <button className="px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-xs font-semibold" disabled={busy === a.id} onClick={() => sendOffer(a)}>
-                🎯 Send Offer
-              </button>
-            )}
+        <div key={a.id} className="bg-white rounded-lg px-3 py-2.5 text-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="min-w-0">
+              <span className="font-medium text-ink-900">{a.student?.user?.name}</span>
+              <span className="text-xs text-slate-400 ml-2">{a.student?.branch} · CGPA {a.student?.cgpa}</span>
+            </div>
+            <div className="flex items-center flex-wrap gap-2">
+              {a.offer ? <StatusBadge status={a.offer.status} /> : <StatusBadge status={a.status} />}
+              {NEXT[a.status] && (
+                <button className="px-2.5 py-1 rounded-lg bg-primary-600 text-white text-xs font-semibold disabled:opacity-50" disabled={busy === a.id} onClick={() => advance(a)}>
+                  → {NEXT[a.status].replaceAll('_', ' ')}
+                </button>
+              )}
+              {a.status === 'SELECTED' && !a.offer && (
+                <button className="px-2.5 py-1 rounded-lg bg-emerald-500 text-white text-xs font-semibold" disabled={busy === a.id} onClick={() => sendOffer(a)}>
+                  Send Offer
+                </button>
+              )}
+            </div>
           </div>
         </div>
       ))}
@@ -115,15 +117,15 @@ export default function TpoDrivesPage() {
 
   return (
     <div className="animate-fadeUp">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Drives</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Drives</h1>
         <button className="btn-primary" onClick={() => setShowForm(!showForm)}>{showForm ? 'Close Form' : '+ New Drive'}</button>
       </div>
 
       {msg && <div className="mb-4 px-4 py-3 rounded-lg bg-primary-50 text-primary-700 text-sm animate-popIn">{msg}</div>}
 
       {showForm && (
-        <form onSubmit={handleCreate} className="card mb-6 grid md:grid-cols-2 gap-4">
+        <form onSubmit={handleCreate} className="card mb-6 grid sm:grid-cols-2 gap-3 sm:gap-4">
           <select className="input" value={form.companyId} onChange={set('companyId')} required>
             <option value="">Select company</option>
             {(companies.data?.data || []).map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
@@ -137,15 +139,48 @@ export default function TpoDrivesPage() {
           <input className="input" type="number" step="0.1" placeholder="Min CGPA" value={form.minCgpa} onChange={set('minCgpa')} />
           <input className="input" placeholder="Branches (comma separated)" value={form.branches} onChange={set('branches')} />
           <input className="input" placeholder="Grad years (comma separated)" value={form.gradYears} onChange={set('gradYears')} />
-          <textarea className="input md:col-span-2" rows="3" placeholder="Description" value={form.description} onChange={set('description')} required />
-          <button className="btn-primary md:col-span-2" disabled={saving}>{saving ? 'Creating...' : 'Create Drive (starts as DRAFT)'}</button>
+          <textarea className="input sm:col-span-2" rows="3" placeholder="Description" value={form.description} onChange={set('description')} required />
+          <button className="btn-primary sm:col-span-2" disabled={saving}>{saving ? 'Creating...' : 'Create Drive (starts as DRAFT)'}</button>
         </form>
       )}
 
       {loading && <div className="text-sm text-slate-400">Loading drives...</div>}
       {error && <div className="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm">{error}</div>}
 
-      <div className="card overflow-x-auto">
+      {/* mobile: stacked cards */}
+      <div className="space-y-3 lg:hidden">
+        {drives.map((d) => (
+          <div key={d.id} className="card">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <div className="font-semibold text-ink-900 truncate">{d.company?.name}</div>
+                <div className="text-xs text-slate-400">{d.jobRole} · {d.ctcMin}-{d.ctcMax}L</div>
+              </div>
+              <StatusBadge status={d.status} />
+            </div>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <button onClick={() => setExpanded(expanded === d.id ? null : d.id)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-ink-900">
+                Applicants ({d._count?.applications ?? 0})
+              </button>
+              {d.status !== 'CLOSED' && (
+                <button onClick={() => toggleStatus(d)} className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-primary-600">
+                  {d.status === 'DRAFT' ? 'Publish' : 'Close'}
+                </button>
+              )}
+            </div>
+            {expanded === d.id && (
+              <div className="mt-3 space-y-3">
+                <Applicants driveId={d.id} />
+                <RoundManager driveId={d.id} />
+              </div>
+            )}
+          </div>
+        ))}
+        {!loading && drives.length === 0 && <div className="card text-center text-slate-400 text-sm">No drives yet. Create one!</div>}
+      </div>
+
+      {/* desktop: table */}
+      <div className="card overflow-x-auto hidden lg:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-left text-xs text-slate-400">
@@ -182,7 +217,7 @@ export default function TpoDrivesPage() {
             ))}
           </tbody>
         </table>
-        {!loading && drives.length === 0 && <div className="py-6 text-center text-slate-400 text-sm">No drives yet. Create one!</div>}
+        {!loading && drives.length === 0 && <div className="py-6 text-center text-slate-400 text-sm">No drives yet.</div>}
       </div>
     </div>
   );

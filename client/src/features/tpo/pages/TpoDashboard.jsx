@@ -9,23 +9,23 @@ export default function TpoDashboard() {
 
   return (
     <div className="animate-fadeUp">
-      <h1 className="text-2xl font-bold mb-1">Placement Dashboard</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-1">Placement Dashboard</h1>
       <p className="text-sm text-slate-400 mb-6">Live placement analytics.</p>
 
       {loading && (
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-          {[0, 1, 2, 3].map((i) => <SkeletonCard key={i} className="h-28" />)}
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          {[0, 1, 2, 3].map((i) => <SkeletonCard key={i} className="h-24 sm:h-28" />)}
         </div>
       )}
       {error && <div className="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm">{error}</div>}
 
       {s && (
         <>
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
             <StatCard label="Placement Rate" value={s.placementRate} suffix="%" />
-            <StatCard label="Placed Students" value={`${s.placed}/${s.totalStudents}`} />
-            <StatCard label="Average CTC" value={`INR ${s.avgCtc}L`} />
-            <StatCard label="Highest CTC" value={`INR ${s.highestCtc}L`} />
+            <StatCard label="Placed" value={`${s.placed}/${s.totalStudents}`} />
+            <StatCard label="Avg CTC" value={`INR ${s.avgCtc}L`} />
+            <StatCard label="Highest" value={`INR ${s.highestCtc}L`} />
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4">
@@ -46,7 +46,7 @@ export default function TpoDashboard() {
               </div>
             </div>
 
-            <div className="card">
+            <div className="card overflow-x-auto">
               <h2 className="font-semibold mb-4">Recent Placements</h2>
               {s.recentPlacements.length === 0 ? (
                 <div className="text-sm text-slate-400">No placements yet.</div>

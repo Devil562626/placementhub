@@ -92,7 +92,7 @@ export default function ProfilePage() {
 
   return (
     <div className="animate-fadeUp max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">My Profile</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">My Profile</h1>
       {msg && <div className="mb-4 px-4 py-3 rounded-lg bg-primary-50 text-primary-700 text-sm animate-popIn">{msg}</div>}
 
       <div className="card">

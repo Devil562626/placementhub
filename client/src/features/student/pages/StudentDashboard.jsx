@@ -19,18 +19,18 @@ export default function StudentDashboard() {
 
   return (
     <div className="animate-fadeUp">
-      <h1 className="text-2xl font-bold">Hi {user?.name?.split(' ')[0]} 👋</h1>
+      <h1 className="text-xl sm:text-2xl font-bold">Hi {user?.name?.split(' ')[0]} 👋</h1>
       <p className="text-sm text-slate-400 mb-6">Here are your eligible drives.</p>
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <StatCard label="Eligible Drives" value={driveCount ?? '-'} icon="💼" />
-        <StatCard label="Active Applications" value={apps.data ? activeApps : '-'} icon="📝" />
-        <StatCard label="Offers" value={offers.data ? offers.data.data.length : '-'} icon="🎯" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <StatCard label="Eligible Drives" value={driveCount ?? '-'} />
+        <StatCard label="Active Applications" value={apps.data ? activeApps : '-'} />
+        <StatCard label="Offers" value={offers.data ? offers.data.data.length : '-'} />
       </div>
 
       {pendingOffers > 0 && (
         <Link to="/offers" className="block mb-6 px-4 py-3 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-medium animate-popIn hover:bg-emerald-100 transition">
-          🎉 You have {pendingOffers} offer{pendingOffers > 1 ? 's' : ''} waiting! Click here to respond.
+          🎉 You have {pendingOffers} offer{pendingOffers > 1 ? 's' : ''} waiting! Tap to respond.
         </Link>
       )}
 

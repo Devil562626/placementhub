@@ -22,7 +22,7 @@ export default function OffersPage() {
 
   return (
     <div className="animate-fadeUp">
-      <h1 className="text-2xl font-bold mb-6">My Offers</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">My Offers</h1>
       {loading && <div className="text-sm text-slate-400">Loading...</div>}
       {error && <div className="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm">{error}</div>}
       <div className="space-y-4">
